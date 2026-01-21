@@ -13,7 +13,7 @@ export default function PredictPage() {
     const [teams, setTeams] = useState<Team[]>([]);
     const [homeTeam, setHomeTeam] = useState<Team | null>(null);
     const [awayTeam, setAwayTeam] = useState<Team | null>(null);
-    const [odds, setOdds] = useState<Odds>({ home: 2.0, draw: 3.0, away: 4.0 });
+    const [odds, setOdds] = useState<Odds | null>(null);
     const [prediction, setPrediction] = useState<MatchPrediction | null>(null);
     const [loading, setLoading] = useState(false);
     const [loadingTeams, setLoadingTeams] = useState(false);
@@ -36,6 +36,7 @@ export default function PredictPage() {
                 setHomeTeam(null);
                 setAwayTeam(null);
                 setPrediction(null);
+                setOdds(null);
                 try {
                     const leagueTeams = await api.getTeamsByLeague(selectedLeague.id);
                     setTeams(leagueTeams);
@@ -54,13 +55,14 @@ export default function PredictPage() {
         if (homeTeam && awayTeam) {
             const fetchOdds = async () => {
                 setLoadingOdds(true);
+                setOdds(null);
                 try {
                     const matchOdds = await api.getMatchOdds(homeTeam.id, awayTeam.id);
                     if (matchOdds) {
                         setOdds(matchOdds);
                     }
-                } catch {
-                    console.log('Using default odds');
+                } catch (err) {
+                    console.error('Error fetching odds:', err);
                 } finally {
                     setLoadingOdds(false);
                 }
@@ -73,6 +75,15 @@ export default function PredictPage() {
         e.preventDefault();
         if (!selectedLeague || !homeTeam || !awayTeam) {
             alert('Please select league and both teams');
+            return;
+        }
+
+        if (!odds) {
+            alert('No odds available for this match. Prediction usually requires odds data.');
+            // Optionally allow proceeding without odds, but for now we'll require them or mock them in backend? 
+            // Logic in api.predictMatch sends odds. If null, it might fail.
+            // We can check if api.predictMatch handles missing odds.
+            // Assuming strict requirement for now.
             return;
         }
 
@@ -207,9 +218,10 @@ export default function PredictPage() {
                                         <div>
                                             <label className="block text-xs text-zinc-500 mb-1">Home</label>
                                             <input
-                                                type="number"
+                                                type="text"
                                                 className="w-full p-2.5 rounded-lg border border-zinc-700/50 bg-zinc-800/40 text-white text-sm font-semibold cursor-not-allowed opacity-80"
-                                                value={odds.home}
+                                                value={odds ? odds.home.toFixed(2) : ''}
+                                                placeholder="N/A"
                                                 readOnly
                                                 disabled
                                             />
@@ -217,9 +229,10 @@ export default function PredictPage() {
                                         <div>
                                             <label className="block text-xs text-zinc-500 mb-1">Draw</label>
                                             <input
-                                                type="number"
+                                                type="text"
                                                 className="w-full p-2.5 rounded-lg border border-zinc-700/50 bg-zinc-800/40 text-white text-sm font-semibold cursor-not-allowed opacity-80"
-                                                value={odds.draw}
+                                                value={odds ? odds.draw.toFixed(2) : ''}
+                                                placeholder="N/A"
                                                 readOnly
                                                 disabled
                                             />
@@ -227,24 +240,30 @@ export default function PredictPage() {
                                         <div>
                                             <label className="block text-xs text-zinc-500 mb-1">Away</label>
                                             <input
-                                                type="number"
+                                                type="text"
                                                 className="w-full p-2.5 rounded-lg border border-zinc-700/50 bg-zinc-800/40 text-white text-sm font-semibold cursor-not-allowed opacity-80"
-                                                value={odds.away}
+                                                value={odds ? odds.away.toFixed(2) : ''}
+                                                placeholder="N/A"
                                                 readOnly
                                                 disabled
                                             />
                                         </div>
                                     </div>
-                                    {homeTeam && awayTeam && !loadingOdds && (
-                                        <p className="text-[10px] text-zinc-500 mt-1">
-                                            Odds automatically fetched from SportsMonk API
+                                    {homeTeam && awayTeam && !loadingOdds && odds && (
+                                        <p className="text-[10px] text-green-500 mt-1">
+                                            Live odds found
+                                        </p>
+                                    )}
+                                    {homeTeam && awayTeam && !loadingOdds && !odds && (
+                                        <p className="text-[10px] text-red-500 mt-1">
+                                            No upcoming game odds found
                                         </p>
                                     )}
                                 </div>
 
                                 <button
                                     type="submit"
-                                    disabled={loading || !homeTeam || !awayTeam}
+                                    disabled={loading || !homeTeam || !awayTeam || !odds}
                                     className="w-full py-3.5 rounded-lg bg-gradient-to-r from-red-600 to-red-500 text-white font-bold text-sm hover:brightness-110 transition-all shadow-xl shadow-red-600/25 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
                                 >
                                     {loading ? (

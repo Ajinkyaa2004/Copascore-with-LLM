@@ -121,12 +121,19 @@ export const api = {
       const response = await fetch(`/api/odds?homeTeamId=${homeTeamId}&awayTeamId=${awayTeamId}`);
       if (!response.ok) return null;
       const data = await response.json();
+
+      if (data.debug) {
+        console.log('--- Odds API Debug Info ---');
+        data.debug.forEach((log: string) => console.log(log));
+        console.log('---------------------------');
+      }
+
       if (data.data && data.data.length > 0) {
         const odds = data.data[0];
         return {
-          home: odds.home || 2.0,
-          draw: odds.draw || 3.0,
-          away: odds.away || 4.0
+          home: odds.home,
+          draw: odds.draw,
+          away: odds.away
         };
       }
       return null;
