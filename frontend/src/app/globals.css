@@ -1,0 +1,314 @@
+@import "tailwindcss";
+
+:root {
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 9, 9, 11;
+  /* zinc-950 */
+  --background-end-rgb: 9, 9, 11;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background-color: rgb(var(--background-start-rgb));
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 20px 20px;
+  min-height: 100vh;
+}
+
+/* Torch Effect Styles */
+.torch-container {
+  position: relative;
+  display: inline-block;
+}
+
+.torch-flash-overlay {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 200%;
+  height: 300px;
+  background: radial-gradient(ellipse at center,
+      rgba(255, 255, 255, 0.3) 0%,
+      rgba(255, 255, 255, 0.2) 20%,
+      rgba(255, 255, 255, 0.1) 40%,
+      transparent 70%);
+  pointer-events: none;
+  filter: blur(20px);
+  z-index: 10;
+}
+
+.torch-text {
+  position: relative;
+  z-index: 15;
+}
+
+/* Enhanced Splash Animation Keyframes - Realistic Physics */
+@keyframes bounce {
+  0% {
+    transform: translateY(-600px) rotate(0deg);
+    animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+    opacity: 0;
+  }
+
+  5% {
+    opacity: 1;
+  }
+
+  /* First big bounce - FAST */
+  12% {
+    transform: translateY(0) rotate(180deg);
+    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  /* Second bounce - Still fast but slowing */
+  24% {
+    transform: translateY(-400px) rotate(360deg);
+    animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  }
+
+  36% {
+    transform: translateY(0) rotate(540deg);
+    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  /* Third bounce - Noticeably slower */
+  46% {
+    transform: translateY(-200px) rotate(680deg);
+    animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  }
+
+  56% {
+    transform: translateY(0) rotate(820deg);
+    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  /* Fourth bounce - Much slower */
+  64% {
+    transform: translateY(-80px) rotate(900deg);
+    animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  }
+
+  72% {
+    transform: translateY(0) rotate(980deg);
+    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  /* Fifth bounce - Very slow */
+  78% {
+    transform: translateY(-30px) rotate(1020deg);
+    animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  }
+
+  84% {
+    transform: translateY(0) rotate(1060deg);
+    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  /* Final tiny bounce */
+  88% {
+    transform: translateY(-10px) rotate(1080deg);
+    animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  }
+
+  92% {
+    transform: translateY(0) rotate(1100deg);
+  }
+
+  /* Settle and slight wobble */
+  96% {
+    transform: translateY(-2px) rotate(1110deg);
+  }
+
+  100% {
+    transform: translateY(0) rotate(1120deg);
+  }
+}
+
+@keyframes ballShadow {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+
+  8% {
+    opacity: 0.3;
+  }
+
+  15% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+
+  25% {
+    transform: scale(0.7);
+    opacity: 0.4;
+  }
+
+  35% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+
+  45% {
+    transform: scale(0.85);
+    opacity: 0.5;
+  }
+
+  55% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+
+  65% {
+    transform: scale(0.92);
+    opacity: 0.55;
+  }
+
+  75% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+
+  85% {
+    transform: scale(0.96);
+    opacity: 0.58;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+}
+
+@keyframes ballGlow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.3),
+      0 0 40px rgba(239, 68, 68, 0.2),
+      0 0 60px rgba(239, 68, 68, 0.1);
+  }
+
+  50% {
+    box-shadow: 0 0 30px rgba(239, 68, 68, 0.5),
+      0 0 60px rgba(239, 68, 68, 0.3),
+      0 0 90px rgba(239, 68, 68, 0.2);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.football-bounce {
+  animation: bounce 2.5s ease-in-out forwards, ballGlow 2s ease-in-out infinite;
+}
+
+.football-shadow {
+  animation: ballShadow 2.5s ease-in-out forwards;
+}
+
+.animate-fade-in-delay {
+  animation: fadeIn 0.5s ease-out 2.5s forwards;
+}
+
+/* Splash Animation Styles */
+@keyframes superBounce {
+
+  /* Start - Ball drops from above */
+  0% {
+    transform: translateY(-400px) rotate(0deg);
+    opacity: 0;
+    animation-timing-function: ease-in;
+  }
+
+  5% {
+    opacity: 1;
+  }
+
+  /* First bounce - BIG */
+  20% {
+    transform: translateY(0px) rotate(360deg);
+    animation-timing-function: ease-out;
+  }
+
+  40% {
+    transform: translateY(-250px) rotate(720deg);
+    animation-timing-function: ease-in;
+  }
+
+  /* Second bounce - Medium */
+  55% {
+    transform: translateY(0px) rotate(1080deg);
+    animation-timing-function: ease-out;
+  }
+
+  70% {
+    transform: translateY(-120px) rotate(1260deg);
+    animation-timing-function: ease-in;
+  }
+
+  /* Third bounce - Small */
+  80% {
+    transform: translateY(0px) rotate(1440deg);
+    animation-timing-function: ease-out;
+  }
+
+  88% {
+    transform: translateY(-40px) rotate(1530deg);
+    animation-timing-function: ease-in;
+  }
+
+  /* Final settle */
+  94% {
+    transform: translateY(0px) rotate(1620deg);
+  }
+
+  100% {
+    transform: translateY(0px) rotate(1620deg);
+  }
+}
+
+@keyframes superGlow {
+
+  0%,
+  100% {
+    filter: drop-shadow(0 0 20px rgba(239, 68, 68, 0.4)) drop-shadow(0 0 40px rgba(239, 68, 68, 0.2));
+  }
+
+  50% {
+    filter: drop-shadow(0 0 30px rgba(239, 68, 68, 0.6)) drop-shadow(0 0 60px rgba(239, 68, 68, 0.4));
+  }
+}
+
+.mega-bounce {
+  animation: superBounce 3s forwards;
+}
+
+.delayed-fade {
+  animation: fadeInText 0.5s ease-out 3s forwards;
+  opacity: 0;
+}
+
+@keyframes fadeInText {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
